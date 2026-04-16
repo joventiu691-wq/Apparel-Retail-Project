@@ -1,0 +1,45 @@
+{% extends 'catalog/base.html' %} {% load humanize %} {% block content %}
+<div class="products-header">
+  <h1>My Orders</h1>
+</div>
+
+{% if orders %} {% for order in orders %}
+<div class="order-card">
+  <h2>
+    Order #{{ order.id }}
+    <span class="status-badge status-{{ order.status }}"
+      >{{ order.get_status_display }}</span
+    >
+  </h2>
+
+  <div class="order-details">
+    <p><strong>Placed:</strong> {{ order.created_at|date:"M d, Y H:i" }}</p>
+    <p>
+      <strong>Total:</strong> ₱{{ order.total_price|floatformat:2|intcomma }}
+    </p>
+    <p><strong>Items:</strong></p>
+    <ul class="order-items-list">
+      {% for item in order.get_order_items_list %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+    <p><strong>Contact number:</strong> {{ order.phone }}</p>
+    <p><strong>Delivery address:</strong> {{ order.address }}</p>
+    <p><strong>Payment:</strong> {{ order.payment_method|capfirst }}</p>
+  </div>
+
+  {% if order.status == 'pending' %}
+  <div class="order-actions">
+    <form method="post" action="{% url 'cancel_order' order.id %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Cancel order</button>
+    </form>
+  </div>
+  {% endif %}
+</div>
+{% endfor %} {% else %}
+<p>
+  You haven't placed any orders yet. Your past orders and order status will
+  appear here.
+</p>
+{% endif %} {% endblock %}

@@ -1,0 +1,24 @@
+{% load static %}
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FORTUNE APPAREL</title>
+    <link rel="stylesheet" href="{% static 'catalog/styles.css' %}" />
+  </head>
+  <body>
+    <div class="hero">
+      <h1>Welcome to FORTUNE APPAREL</h1>
+      <p>
+        Discover premium fashion and style. Create your account to start
+        shopping and save your favorites.
+      </p>
+      <div class="buttons">
+        <a href="{% url 'login' %}" class="btn btn-primary">Log In</a>
+        <a href="{% url 'signup' %}" class="btn btn-secondary">Sign Up</a>
+        <a href="/shop/" class="btn btn-primary">View Shop</a>
+      </div>
+    </div>
+  </body>
+</html>

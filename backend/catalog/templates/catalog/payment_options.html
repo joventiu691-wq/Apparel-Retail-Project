@@ -1,0 +1,116 @@
+{% extends 'catalog/base.html' %} {% load humanize %} {% block content %}
+<div class="payment-options-container">
+  <div class="payment-header">
+    <h1>Select Payment Method</h1>
+    <p style="font-size: 1.2rem; font-weight: 600">
+      Total Amount: ₱{{ cart.get_total_price|floatformat:2|intcomma }}
+    </p>
+  </div>
+
+  <div class="payment-methods">
+    <div class="payment-method payment-method-highlight">
+      <h3>💵 Cash on Delivery</h3>
+      <p>Pay when your order arrives. Fill in delivery details below.</p>
+      <button type="button" id="show-cod-form" class="btn btn-primary">
+        Place Order
+      </button>
+    </div>
+  </div>
+
+  <div id="cod-form-container" style="display: none; margin-top: 2rem">
+    <div class="form-container">
+      <h2>Cash on Delivery Details</h2>
+      <form method="post" action="{% url 'checkout' %}">
+        {% csrf_token %}
+        <input type="hidden" name="payment_method" value="cash" />
+
+        <div class="form-group">
+          <label for="customer_name">Full Name</label>
+          <input
+            type="text"
+            id="customer_name"
+            name="customer_name"
+            required
+            placeholder="Full name"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="customer_email">Email Address</label>
+          <input
+            type="email"
+            id="customer_email"
+            name="customer_email"
+            required
+            placeholder="you@example.com"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="customer_phone">Contact Number</label>
+          <input
+            type="tel"
+            id="customer_phone"
+            name="customer_phone"
+            required
+            placeholder="09XXXXXXXXX"
+            maxlength="11"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="customer_address">Delivery Address</label>
+          <textarea
+            id="customer_address"
+            name="customer_address"
+            required
+            placeholder="Street, barangay, city, postal code"
+          ></textarea>
+        </div>
+
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+          <button type="submit" class="btn btn-primary" style="flex: 1">
+            Confirm Order
+          </button>
+          <button
+            type="button"
+            onclick="hideCodForm()"
+            class="btn btn-cart-secondary"
+            style="flex: 1"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div style="margin-top: 2rem; text-align: center">
+    <a href="{% url 'cart_detail' %}" class="btn btn-cart-secondary"
+      >Back to Cart</a
+    >
+  </div>
+</div>
+
+<script>
+  function hideCodForm() {
+    var form = document.getElementById("cod-form-container");
+    if (form) {
+      form.style.display = "none";
+    }
+  }
+
+  function showCodForm() {
+    var form = document.getElementById("cod-form-container");
+    if (form) {
+      form.style.display = "block";
+      window.scrollTo({ top: form.offsetTop - 20, behavior: "smooth" });
+    }
+  }
+
+  var codButton = document.getElementById("show-cod-form");
+  if (codButton) {
+    codButton.addEventListener("click", showCodForm);
+  }
+</script>
+{% endblock %}

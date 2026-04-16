@@ -1,0 +1,32 @@
+{% extends 'catalog/base.html' %} {% block content %}
+<div class="checkout-success-container">
+  <div class="success-icon">✓</div>
+  <div class="success-message-main">
+    <h1>Thank You for Your Purchase!</h1>
+    <p>Your order has been successfully processed.</p>
+  </div>
+
+  <div class="success-details">
+    <p><strong>Payment Method:</strong> {{ payment_method|title }}</p>
+    {% if customer_name %}
+    <p><strong>Name:</strong> {{ customer_name }}</p>
+    <p><strong>Email:</strong> {{ customer_email }}</p>
+    <p><strong>Phone:</strong> {{ customer_phone }}</p>
+    <p><strong>Address:</strong> {{ customer_address }}</p>
+    <p>
+      Your order will be delivered to the address above. We will contact you
+      once your order is on its way.
+    </p>
+    {% else %}
+    <p>
+      You will receive a confirmation email shortly with your order details and
+      tracking information.
+    </p>
+    {% endif %}
+  </div>
+
+  <div class="success-actions">
+    <a href="/shop/" class="btn btn-primary">Continue Shopping</a>
+  </div>
+</div>
+{% endblock %}

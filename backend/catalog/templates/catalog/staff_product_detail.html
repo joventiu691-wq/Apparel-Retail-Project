@@ -1,0 +1,67 @@
+{% extends 'catalog/base.html' %} {% block content %}
+<a href="{% url 'staff_product_list' %}" class="back-link"
+  >← Back to Staff Products</a
+>
+
+<div class="product-detail-container">
+  <div class="product-image-large">
+    {% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+    {% else %}
+    <div
+      style="
+        background: #f0f0f0;
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <p>No image available</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="product-details">
+    <h1>{{ product.name }}</h1>
+    <p class="product-details-price">₱{{ product.price|floatformat:2 }}</p>
+    <div class="product-divider"></div>
+
+    {% if status_message %}
+    <div class="order-card" style="margin-bottom: 1rem">
+      <p><strong>{{ status_message }}</strong></p>
+    </div>
+    {% endif %}
+
+    <div class="stock-info">
+      <strong>Current stock:</strong> {{ product.stock }}
+    </div>
+    {% if product.category %}
+    <div class="stock-info">
+      <strong>Category:</strong> {{ product.category.name }}
+    </div>
+    {% endif %}
+
+    <form method="post" class="form-container">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="id_name">Name</label>
+        {{ form.name }}
+      </div>
+      <div class="form-group">
+        <label for="id_price">Price</label>
+        {{ form.price }}
+      </div>
+      <div class="form-group">
+        <label for="id_stock">Stock</label>
+        {{ form.stock }}
+      </div>
+      <div class="form-group">
+        <label for="id_description">Description</label>
+        {{ form.description }}
+      </div>
+      <button type="submit" class="btn btn-primary">Save Product</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

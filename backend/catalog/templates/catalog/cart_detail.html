@@ -1,0 +1,96 @@
+{% extends 'catalog/base.html' %} {% load humanize %} {% block content %}
+<div class="cart-container">
+  <div class="cart-header">
+    <h1>Your Shopping Bag</h1>
+  </div>
+
+  {% if cart_count > 0 %}
+  <div class="cart-items-info">
+    You have <strong>{{ cart_count }}</strong> item{{ cart_count|pluralize }} in
+    your bag.
+  </div>
+
+  {% for item in cart %}
+  <div class="cart-item">
+    <div>
+      {% if item.product.image %}
+      <img
+        src="{{ item.product.image.url }}"
+        class="cart-item-image"
+        alt="{{ item.product.name }}"
+      />
+      {% else %}
+      <div class="cart-item-image" style="background: #f0f0f0"></div>
+      {% endif %}
+    </div>
+    <div class="cart-item-details">
+      <h3>{{ item.product.name }}</h3>
+      <div
+        class="cart-item-info"
+        style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap"
+      >
+        <div
+          class="quantity-controls"
+          style="display: inline-flex; align-items: center; gap: 0.5rem"
+        >
+          <form
+            method="post"
+            action="{% url 'update_cart_quantity' item.product.id %}"
+            style="display: inline-flex; gap: 0.25rem; align-items: center"
+          >
+            {% csrf_token %}
+            <button
+              type="submit"
+              name="action"
+              value="dec"
+              class="btn btn-secondary"
+              style="padding: 0.35rem 0.7rem"
+            >
+              -
+            </button>
+            <span
+              style="min-width: 2rem; text-align: center; display: inline-block"
+              >{{ item.quantity }}</span
+            >
+            <button
+              type="submit"
+              name="action"
+              value="inc"
+              class="btn btn-secondary"
+              style="padding: 0.35rem 0.7rem"
+            >
+              +
+            </button>
+          </form>
+        </div>
+        <p>
+          <strong>Price:</strong> ₱{{ item.total_price|floatformat:2|intcomma }}
+        </p>
+      </div>
+      <a href="{% url 'remove_from_cart' item.product.id %}" class="remove-link"
+        >Remove Item</a
+      >
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="cart-summary">
+    <div class="cart-total">
+      Total: ₱{{ cart.get_total_price|floatformat:2|intcomma }}
+    </div>
+    <div class="cart-actions">
+      <a href="/shop/" class="btn btn-cart-secondary">Add More Items</a>
+      <a href="{% url 'payment_options' %}" class="btn btn-cart-success"
+        >Purchase</a
+      >
+      <a href="{% url 'clear_cart' %}" class="btn btn-danger">Clear Cart</a>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-cart">
+    <p>Your bag is currently empty.</p>
+    <a href="/shop/" class="btn btn-primary">Continue Shopping</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

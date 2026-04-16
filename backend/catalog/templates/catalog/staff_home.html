@@ -1,0 +1,27 @@
+{% extends 'catalog/base.html' %} {% block content %}
+<div class="products-header">
+  <h1>Staff Dashboard</h1>
+</div>
+
+<div
+  class="staff-dashboard"
+  style="display: flex; gap: 1.5rem; flex-wrap: wrap"
+>
+  <div class="card" style="padding: 1rem; min-width: 220px">
+    <h2>Products</h2>
+    <p>Total products: {{ product_count }}</p>
+    <a href="{% url 'staff_product_list' %}" class="btn btn-staff"
+      >Manage Products</a
+    >
+  </div>
+
+  <div class="card" style="padding: 1rem; min-width: 220px">
+    <h2>Orders</h2>
+    <p>Pending orders: {{ pending_orders_count }}</p>
+    <a href="{% url 'staff_order_dashboard' %}" class="btn btn-staff"
+      >View Orders</a
+    >
+  </div>
+</div>
+
+{% endblock %}

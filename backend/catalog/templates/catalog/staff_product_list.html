@@ -1,0 +1,46 @@
+{% extends 'catalog/base.html' %} {% block content %}
+<div class="products-header">
+  <div
+    style="
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    "
+  >
+    <h1>Staff Product Catalog</h1>
+  </div>
+</div>
+
+<div class="products-grid">
+  {% for product in products %}
+  <div class="product-card">
+    <a href="{% url 'staff_product_detail' product.pk %}">
+      {% if product.image %}
+      <img
+        src="{{ product.image.url }}"
+        class="product-image"
+        alt="{{ product.name }}"
+      />
+      {% else %}
+      <div class="product-image" style="background: #f0f0f0"></div>
+      {% endif %}
+    </a>
+    <div class="product-info">
+      <h3 class="product-name">
+        <a href="{% url 'staff_product_detail' product.pk %}"
+          >{{ product.name }}</a
+        >
+      </h3>
+      <p class="product-price">₱{{ product.price|floatformat:2 }}</p>
+      <p class="product-category">Stock: {{ product.stock }}</p>
+      {% if product.category %}
+      <p class="product-category">Category: {{ product.category.name }}</p>
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <p>No products are available.</p>
+  {% endfor %}
+</div>
+{% endblock %}

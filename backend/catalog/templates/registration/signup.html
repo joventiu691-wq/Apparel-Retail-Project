@@ -1,0 +1,36 @@
+{% extends 'catalog/base.html' %} {% block content %}
+<div class="form-container">
+  <h1 style="text-align: center; margin-bottom: 2rem">Create Your Account</h1>
+
+  {% if form.non_field_errors %}
+  <div class="error-message">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  <form method="post" action="{% url 'signup' %}" novalidate>
+    {% csrf_token %} {% for field in form %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }} {% if field.errors %}
+      <div class="error-message" style="margin-top: 0.5rem">
+        {% for error in field.errors %}
+        <p style="margin: 0">• {{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %} {% if field.help_text %}
+      <p
+        style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem"
+      >
+        {{ field.help_text|safe }}
+      </p>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="submit-btn">Sign Up</button>
+  </form>
+
+  <div class="form-link">
+    Already have an account? <a href="{% url 'login' %}">Log in here</a>
+  </div>
+</div>
+{% endblock %}

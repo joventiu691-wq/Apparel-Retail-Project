@@ -1,0 +1,90 @@
+{% extends 'catalog/base.html' %} {% load humanize %} {% block content %}
+<a href="/shop/" class="back-link">← Back to Products</a>
+
+<div class="product-detail-container">
+  <div class="product-image-large">
+    {% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+    {% else %}
+    <div
+      style="
+        background: #f0f0f0;
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <p>No image available</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="product-details">
+    <h1>{{ product.name }}</h1>
+    <p class="product-details-price">
+      ₱{{ product.price|floatformat:2|intcomma }}
+    </p>
+    <div class="product-divider"></div>
+    <p class="product-description">{{ product.description }}</p>
+    <div class="stock-info">
+      <strong>Available Stock:</strong> {{ product.stock }}
+    </div>
+
+    <div class="product-actions">
+      <form
+        method="post"
+        action="{% url 'add_to_cart' product.id %}"
+        class="add-to-cart-form"
+      >
+        {% csrf_token %}
+        <div class="quantity-group">
+          <button type="button" class="qty-action" onclick="changeQty(-1)">
+            -
+          </button>
+          <input
+            type="number"
+            id="add-quantity"
+            name="quantity"
+            value="1"
+            min="1"
+            class="qty-input"
+          />
+          <button type="button" class="qty-action" onclick="changeQty(1)">
+            +
+          </button>
+        </div>
+        <button class="btn btn-dark add-to-cart-button" type="submit">
+          ADD TO CART
+        </button>
+      </form>
+
+      {% if user.is_authenticated %} {% if product.id in user_favorites %}
+      <div class="favorites-message">
+        This is in your favorites.
+        <a
+          href="{% url 'remove_from_favorites' product.id %}"
+          class="btn btn-link"
+          >Remove from Favorites</a
+        >
+      </div>
+      {% else %}
+      <a
+        href="{% url 'add_to_favorites' product.id %}"
+        style="text-decoration: none"
+      >
+        <button class="btn btn-danger">ADD TO FAVORITES</button>
+      </a>
+      {% endif %} {% endif %}
+    </div>
+    <script>
+      function changeQty(delta) {
+        const input = document.getElementById("add-quantity");
+        let value = parseInt(input.value, 10) || 1;
+        value = Math.max(1, value + delta);
+        input.value = value;
+      }
+    </script>
+  </div>
+</div>
+{% endblock %}

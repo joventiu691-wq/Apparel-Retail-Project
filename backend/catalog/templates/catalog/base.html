@@ -1,0 +1,92 @@
+{% load static %}
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FORTUNE APPAREL</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="{% static 'catalog/favicon.png' %}"
+    />
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="{% static 'catalog/favicon.png' %}"
+    />
+    <link rel="stylesheet" href="{% static 'catalog/styles.css' %}" />
+  </head>
+  <body>
+    <nav>
+      <div class="nav-left">
+        <span class="brand-logo">〄 FORTUNE</span>
+        {% if not user.is_staff and not user.is_superuser %}
+        <div class="category-filter">
+          <select id="category-select" aria-label="Select category">
+            <option value="" {% if not selected_category %} selected{% endif %}>
+              All categories
+            </option>
+            {% for cat in all_categories %}
+            <option
+              value="{{ cat.name }}"
+              {%
+              if
+              selected_category=""
+              ="cat.name"
+              %}
+              selected{%
+              endif
+              %}
+            >
+              {{ cat.name|upper }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <a href="/shop/">SHOP ALL</a>
+
+        {% endif %}
+      </div>
+      <div class="nav-right">
+        {% load group_filters %} {% if user.is_authenticated %}
+        <span class="welcome-user">Welcome {{ user.username }}</span>
+        {% if user.is_staff or user|has_group:'Staff' %}
+        <a href="{% url 'staff_home' %}">DASHBOARD</a>
+        <a href="{% url 'staff_product_list' %}">MANAGE PRODUCTS</a>
+        <a href="{% url 'staff_order_dashboard' %}">VIEW ORDERS</a>
+        {% else %}
+        <a href="{% url 'favorites' %}">FAVORITES</a>
+        <a href="{% url 'order_history' %}">MY ORDERS</a>
+        <a href="/shop/cart/"
+          ><span class="cart-badge">CART {{ cart_count|default:0 }}</span></a
+        >
+        {% endif %}
+        <a href="{% url 'logout' %}">LOGOUT</a>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn-auth">LOGIN</a>
+        <a href="{% url 'signup' %}" class="btn-auth">SIGN UP</a>
+        {% endif %}
+      </div>
+    </nav>
+
+    <div class="container">{% block content %} {% endblock %}</div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var categorySelect = document.getElementById("category-select");
+        if (categorySelect) {
+          categorySelect.addEventListener("change", function () {
+            var category = this.value;
+            if (!category) {
+              window.location.href = "/shop/";
+            } else {
+              window.location.href =
+                "/shop/" + encodeURIComponent(category) + "/";
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

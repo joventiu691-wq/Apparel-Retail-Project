@@ -1,0 +1,41 @@
+{% extends 'catalog/base.html' %} {% block content %}
+<div class="form-container">
+  <h1 style="text-align: center; margin-bottom: 2rem">Log In</h1>
+
+  {% if form.non_field_errors %}
+  <div class="error-message">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %} {% if form.username %}
+    <div class="form-group">
+      <label for="{{ form.username.id_for_label }}"
+        >{{ form.username.label }}</label
+      >
+      {{ form.username }} {% if form.username.errors %}
+      <div class="error-message" style="margin-top: 0.5rem">
+        {{ form.username.errors }}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %} {% if form.password %}
+    <div class="form-group">
+      <label for="{{ form.password.id_for_label }}"
+        >{{ form.password.label }}</label
+      >
+      {{ form.password }} {% if form.password.errors %}
+      <div class="error-message" style="margin-top: 0.5rem">
+        {{ form.password.errors }}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <button type="submit" class="submit-btn">Log In</button>
+  </form>
+
+  <div class="form-link">
+    Don't have an account? <a href="{% url 'signup' %}">Sign up here</a>
+  </div>
+</div>
+{% endblock %}
