@@ -96,8 +96,7 @@ def remove_from_cart(request, product_id):
 
 def clear_cart(request):
     cart = Cart(request)
-    cart.cart.clear()
-    cart.session.modified = True
+    cart.clear()
     return redirect('cart_detail')
 
 @login_required
@@ -140,11 +139,8 @@ def checkout(request):
                 quantity=item['quantity'],
                 price=product.price,
             )
-            product.stock -= item['quantity']
-            product.save(update_fields=['stock'])
 
-        cart.cart.clear()
-        cart.session.modified = True
+        cart.clear()
         return render(request, 'catalog/checkout_success.html', {
             'payment_method': payment_method,
             'customer_name': customer_name,
@@ -197,10 +193,6 @@ def order_history(request):
 def cancel_order(request, order_id):
     order = get_object_or_404(Order, pk=order_id, user=request.user)
     if request.method == 'POST' and order.status == Order.STATUS_PENDING:
-        for item in order.items.select_related('product').all():
-            product = item.product
-            product.stock += item.quantity
-            product.save(update_fields=['stock'])
         order.status = Order.STATUS_CANCELLED
         order.save(update_fields=['status'])
     return redirect('order_history')
@@ -253,16 +245,26 @@ def staff_order_dashboard(request):
     status_message = None
     if request.method == 'POST':
         if request.POST.get('action') == 'complete_all':
-            updated = Order.objects.filter(status=Order.STATUS_PENDING).update(status=Order.STATUS_COMPLETED)
-            status_message = f'{updated} pending order(s) completed.'
+            pending_orders = Order.objects.filter(status=Order.STATUS_PENDING).prefetch_related('items__product')
+            completed = 0
+            skipped = 0
+            for order in pending_orders:
+                if order.complete():
+                    completed += 1
+                else:
+                    skipped += 1
+            status_message = f'{completed} pending order(s) completed.'
+            if skipped:
+                status_message += f' {skipped} order(s) skipped due to insufficient stock.'
 
         order_id = request.POST.get('order_id')
         if order_id:
             order = get_object_or_404(Order, pk=order_id)
             if order.status == Order.STATUS_PENDING:
-                order.status = Order.STATUS_COMPLETED
-                order.save(update_fields=['status'])
-                status_message = f'Order #{order.id} marked as completed.'
+                if order.complete():
+                    status_message = f'Order #{order.id} marked as completed.'
+                else:
+                    status_message = f'Order #{order.id} could not be completed because stock is unavailable.'
 
     orders = Order.objects.select_related('user').all()
     return render(request, 'catalog/staff_order_dashboard.html', {

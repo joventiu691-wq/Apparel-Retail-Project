@@ -1,7 +1,7 @@
 {% extends 'catalog/base.html' %} {% load humanize %} {% block content %}
 <div class="payment-options-container">
   <div class="payment-header">
-    <h1>Select Payment Method</h1>
+    <h1>Payment</h1>
     <p style="font-size: 1.2rem; font-weight: 600">
       Total Amount: ₱{{ cart.get_total_price|floatformat:2|intcomma }}
     </p>

@@ -6,7 +6,7 @@
 {% if orders %} {% for order in orders %}
 <div class="order-card">
   <h2>
-    Order #{{ order.id }}
+    Order #{{ order.order_number }}
     <span class="status-badge status-{{ order.status }}"
       >{{ order.get_status_display }}</span
     >
